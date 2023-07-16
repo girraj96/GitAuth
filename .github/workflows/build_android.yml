@@ -35,11 +35,11 @@ jobs:
              cd ./android &&
              ./gradlew assembleRelease  
             
-      - name: Create GitHub Release
+- name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
         with:
           tag_name: v1.0.0
           release_name: Release 1.0.0
@@ -47,9 +47,39 @@ jobs:
           prerelease: false
           body: |
             Add release notes or description here.
-            
+
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: APK Release
           path: app/build/outputs/apk/release/app-release.apk
+
+      - name: Get APK Artifact URL
+        id: get_apk_url
+        run: echo "::set-output name=url::$(echo \${{ steps.upload.outputs.artifact_url }} | sed -e 's/artifacts/github.com/')"
+
+      - name: Update Release
+        id: update_release
+        uses: actions/github-script@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
+        with:
+          script: |
+            const response = await github.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: 'v1.0.0' // Specify the tag you used for the release
+            });
+            const release = response.data;
+            release.upload_url = '${{ steps.get_apk_url.outputs.url }}';
+            await github.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.id,
+              tag_name: release.tag_name,
+              name: release.name,
+              body: release.body,
+              draft: release.draft,
+              prerelease: release.prerelease,
+              target_commitish: release.target_commitish
+            });
