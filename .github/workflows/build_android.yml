@@ -35,51 +35,42 @@ jobs:
              cd ./android &&
              ./gradlew assembleRelease  
             
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{secrets.TOKEN_HUB_RELEASE}}
-        with:
-          tag_name: v1.0.2
-          release_name: Release 1.0.2
-          draft: false
-          prerelease: false
-          body: |
-            Add release notes or description here.
-
-      - name: Upload APK
+      - name: Save APK as artifact
         uses: actions/upload-artifact@v2
         with:
           name: APK Release
           path: app/build/outputs/apk/release/app-release.apk
 
-      - name: Get APK Artifact URL
-        id: get_apk_url
-        run: echo "::set-output name=url::$(echo \${{ steps.upload.outputs.artifact_url }} | sed -e 's/artifacts/github.com/')"
+  release:
+    needs: build
+    runs-on: ubuntu-latest
 
-      - name: Update Release
-        id: update_release
-        uses: actions/github-script@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{secrets.TOKEN_HUB_RELEASE}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          script: |
-            const response = await github.repos.getReleaseByTag({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag: 'v1.0.2' // Specify the tag you used for the release
-            });
-            const release = response.data;
-            release.upload_url = '${{ steps.get_apk_url.outputs.url }}';
-            await github.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: release.id,
-              tag_name: release.tag_name,
-              name: release.name,
-              body: release.body,
-              draft: release.draft,
-              prerelease: release.prerelease,
-              target_commitish: release.target_commitish
-            });
+          tag_name: v1.0.0
+          release_name: Release 1.0.0
+          draft: false
+          prerelease: false
+          body: |
+            Add release notes or description here.
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: APK Release
+          path: app/build/outputs/apk/release/
+
+      - name: Add APK to Git tag
+        run: |
+          git config user.name $GITHUB_ACTOR
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git tag -a v1.0.0 -m "Release 1.0.0"
+          git push origin v1.0.0
