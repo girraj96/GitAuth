@@ -1,4 +1,4 @@
-name: "Build Android app"
+name: Build Android app
 
 on:
   push:
@@ -22,24 +22,25 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Setup Node  
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '16'
 
       - name: Run Yarn Install
         run: |
-             yarn install             
+          yarn install
+
       - name: Build application
         run: |
-             cd ./android &&
-             ./gradlew assembleRelease  
-            
+          cd ./android &&
+          ./gradlew assembleRelease
+
       - name: Save APK as artifact
         uses: actions/upload-artifact@v2
         with:
           name: APK Release
-          path: app/build/outputs/apk/release/app-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
 
   release:
     needs: build
@@ -48,6 +49,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Download APK artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: APK Release
+          path: app/build/outputs/apk/release/
+
+      - name: Configure Git
+        run: |
+          git config --global user.name $GITHUB_ACTOR
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Add APK to Git tag
+        run: |
+          git tag -a v1.0.0 -m "Release 1.0.0"
+          git push origin v1.0.0
 
       - name: Create GitHub Release
         id: create_release
@@ -61,16 +78,3 @@ jobs:
           prerelease: false
           body: |
             Add release notes or description here.
-
-      - name: Download APK artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: APK Release
-          path: app/build/outputs/apk/release/
-
-      - name: Add APK to Git tag
-        run: |
-          git config user.name $GITHUB_ACTOR
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git tag -a v1.0.0 -m "Release 1.0.0"
-          git push origin v1.0.0
