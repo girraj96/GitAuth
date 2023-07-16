@@ -44,7 +44,7 @@ jobs:
             retention-days: 3
              
       - name: Create Github Release
-        uses: softprops/action-gh-release@v1
+        uses: kyze8439690/action-release-releaseapk@master
         env:
          GITHUB_TOKEN: ${{secrets.TOKEN_HUB_RELEASE}}
         with:
