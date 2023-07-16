@@ -47,6 +47,8 @@ jobs:
         uses: kyze8439690/action-release-releaseapk@master
         env:
          GITHUB_TOKEN: ${{secrets.TOKEN_HUB_RELEASE}}
+          APP_FOLDER:app
+          RELEASE_TITLE:New Build
         with:
            generate_release_notes: true
            prerelease: true
