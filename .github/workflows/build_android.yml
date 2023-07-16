@@ -68,7 +68,7 @@ jobs:
             const response = await github.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag: 'v1.0.0' // Specify the tag you used for the release
+              tag: 'v1.0.1' // Specify the tag you used for the release
             });
             const release = response.data;
             release.upload_url = '${{ steps.get_apk_url.outputs.url }}';
