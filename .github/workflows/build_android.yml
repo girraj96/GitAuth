@@ -41,6 +41,7 @@ jobs:
            name: release-artifacts
            paths: |
             android/app/build/outputs/apk/release/
+            retention-days: 3
              
       - name: Create Github Release
         uses: softprops/action-gh-release@v1
