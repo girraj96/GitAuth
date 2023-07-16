@@ -48,5 +48,3 @@ jobs:
 
         env:
          GITHUB_TOKEN: ${{secrets.TOKEN_HUB_RELEASE}}
-          APP_FOLDER:app
-          RELEASE_TITLE:New Build
