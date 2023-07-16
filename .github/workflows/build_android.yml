@@ -43,17 +43,15 @@ jobs:
             android/app/build/outputs/apk/release/
             retention-days: 3
             
-      - name: Create Github Tag
-        if: startsWith(github.ref, 'refs/heads/release/')
-        run: |
-          git tag 
-          git push
-             
-      - name: Create Github Release
-        uses: softprops/action-gh-release@v1
-        with:
-          # Identify if this is a pre release by checking if the tag name contains -rc, -b, -a
-          # prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-b') || contains(github.ref, '-a') }}
-          files: android/app/build/outputs/apk/release/app-release.apk
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
+        with:
+          tag_name: v1.0.0
+          release_name: Release 1.0.0
+          draft: false
+          prerelease: false
+          body: |
+            Add release notes or description here.
