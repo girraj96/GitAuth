@@ -33,10 +33,19 @@ jobs:
       - name: Build application
         run: |
              cd ./android &&
-             ./gradlew assembleRelease             
-      - name: Upload application
-        uses: actions/upload-artifact@v2
+             ./gradlew assembleRelease  
+             
+      - name: Upload Release Build to Artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: app
-          path: android/app/build/outputs/apk/release/app-release.apk
-          retention-days: 3
+           name: release-artifacts
+           paths: |
+            android/app/build/outputs/apk/release/
+             
+      - name: Create Github Release
+        uses: softprops/action-gh-release@v1
+        with:
+           generate_release_notes: true
+           prerelease: true
+           files: |
+             android/app/build/outputs/apk/release.apk
