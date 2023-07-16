@@ -46,7 +46,7 @@ jobs:
       - name: Create Github Release
         uses: softprops/action-gh-release@v1
         env:
-         GITHUB_TOKEN: ${{ secrets.TOKEN }}
+         GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
          APP_FOLDER: app
         with:
            generate_release_notes: true
