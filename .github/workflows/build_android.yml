@@ -1,9 +1,9 @@
 name: "Build Android app"
 
 on:
-  workflow_dispatch:
-    branches: [main]
-    # can add push and pull_request here 
+  push:
+    branches:
+      - main
 
 jobs:
   build:
