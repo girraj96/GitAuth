@@ -77,4 +77,4 @@ jobs:
           draft: false
           prerelease: false
           body: |
-            Add release notes or description here.
+            Add release notes or descriptions here.
