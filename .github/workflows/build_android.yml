@@ -39,7 +39,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
+          GITHUB_TOKEN: ${{secrets.TOKEN_HUB_RELEASE}}
         with:
           tag_name: v1.0.1
           release_name: Release 1.0.1
@@ -62,7 +62,7 @@ jobs:
         id: update_release
         uses: actions/github-script@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
+          GITHUB_TOKEN: ${{secrets.TOKEN_HUB_RELEASE}}
         with:
           script: |
             const response = await github.repos.getReleaseByTag({
