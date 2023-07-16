@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app
-          path: ./packages/app-mobile/android/app/build/outputs/apk/debug/app-release.apk
+          path: cd android/app/build/outputs/apk/release/app-release.apk
           retention-days: 3
