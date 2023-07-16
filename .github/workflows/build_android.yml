@@ -54,7 +54,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: APK Release
-          path: app/build/outputs/apk/release/
+          path: ~/Desktop/
 
       - name: Configure Git
         run: |
