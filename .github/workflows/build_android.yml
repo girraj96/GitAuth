@@ -11,15 +11,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Run Yarn Install
-        run: |
-          yarn install
-
-      - name: Set up JDK 11
+        
+      - name: Install Java
         uses: actions/setup-java@v2
         with:
-          java-version: 11
+          java-version: "11"
+          distribution: "adopt"
+          cache: "gradle"
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
       - name: Configure Keystore
         run: |
