@@ -15,19 +15,43 @@ jobs:
       - name: Run Yarn Install
         run: |
           yarn install
-      - name: Build application
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+
+      - name: Configure Keystore
+        run: |
+          mkdir -p $HOME/.android
+          echo ${{ secrets.KEYSTORE_FILE }} | base64 --decode > $HOME/.android/debug.keystore
+
+      - name: Build APK
         run: |
           cd ./android &&
           ./gradlew assembleRelease
-          
+
+      - name: Build AAB
+        run: |
+          cd ./android &&
+          ./gradlew bundleRelease
+
+      - name: Sign AAB
+        run: |
+          cd ./android &&
+          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/.android/debug.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} app/build/outputs/bundle/release/app-release.aab alias_name
+
       - name: Move APK to Release
         run: mv android/app/build/outputs/apk/release/app-release.apk $GITHUB_WORKSPACE/app-release.apk
+
+      - name: Move AAB to Release
+        run: mv android/app/build/outputs/bundle/release/app-release.aab $GITHUB_WORKSPACE/app-release.aab
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
         with:
           tag_name: v1.0
           release_name: Release v1.0
@@ -42,4 +66,14 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ github.workspace }}/app-release.apk
           asset_name: app-release.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload AAB as Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/app-release.aab
+          asset_name: app-release.aab
           asset_content_type: application/vnd.android.package-archive
