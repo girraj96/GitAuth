@@ -30,7 +30,6 @@ jobs:
       - name: Run Yarn Install
         run: |
           yarn install
-
       - name: Build application
         run: |
           cd ./android &&
@@ -43,10 +42,10 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          release_name: Release ${{ steps.version.outputs.version }}
+          tag_name: v1.0
+          release_name: Release v1.0
           draft: false
           prerelease: false
 
@@ -59,8 +58,8 @@ jobs:
           asset_path: ${{ github.workspace }}/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
-          
-      - name: APK Get Download URL
-        id: get_release
+
+      - name: Get APK Download URL
+        id: get_download_url
         run: |
-          echo "::set-output name=download_url::$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets | jq -r '.[] | select(.name == \"app-release.apk\") | .url')"
+          echo "::set-output name=download_url::$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets | jq -r '.[] | select(.name == \"app-release.apk\") | .browser_download_url')"
