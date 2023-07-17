@@ -36,45 +36,21 @@ jobs:
           cd ./android &&
           ./gradlew assembleRelease
 
-      - name: Save APK as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: APK Release
-          path: android/app/build/outputs/apk/release/app-release.apk
 
-  release:
-    needs: build
-    runs-on: ubuntu-latest
+      - name: Move APK to Release
+        run: mv app/build/outputs/apk/release/app-release.apk $GITHUB_WORKSPACE/app-release.apk
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Download APK artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: APK Release
-          path: /Users/girrajsharma/Desktop
-
-      - name: Configure Git
-        run: |
-          git config --global user.name $GITHUB_ACTOR
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Add APK to Git tag
-        run: |
-          git tag -a v1.0.0 -m "Release 1.0.0"
-          git push origin v1.0.0
-
-      - name: Create GitHub Release
+      - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
         with:
-          tag_name: v1.0.0
-          release_name: Release 1.0.0
+          tag_name: v1.0
+          release_name: Release v1.0
           draft: false
           prerelease: false
-          body: |
-            Add release notes or descriptions here.
+          files: |
+            source-code.zip
+            app-release.apk
+
