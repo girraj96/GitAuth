@@ -74,7 +74,7 @@ jobs:
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
 
-      - name: Upload AAB as Release Asset
+      - name: Upload AAB as an Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
