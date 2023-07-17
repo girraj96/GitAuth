@@ -45,21 +45,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
         with:
-          tag_name: v1.0
-          release_name: Release v1.0
+          tag_name: ${{ steps.version.outputs.version }}
+          release_name: Release ${{ steps.version.outputs.version }}
           draft: false
           prerelease: false
 
       - name: Upload APK as Release Asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ github.workspace }}/app-release.apk
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
-
+          
       - name: Get APK Download URL
         id: get_release
         run: |
