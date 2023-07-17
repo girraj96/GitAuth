@@ -60,7 +60,7 @@ jobs:
           asset_name: app-release.apk
           asset_content_type: application/vnd.android.package-archive
           
-      - name: Get APK Download URL
+      - name: APK Get Download URL
         id: get_release
         run: |
           echo "::set-output name=download_url::$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets | jq -r '.[] | select(.name == \"app-release.apk\") | .url')"
