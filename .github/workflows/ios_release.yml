@@ -3,8 +3,7 @@ name: IOS Production Build
 
 on:
   workflow_dispatch:
-  release:
-    types: [published] # only run the workflow when a new release has been published
+    branches: [main]
 
 jobs:
   ios-build:
