@@ -35,7 +35,9 @@ jobs:
         run: |
           cd ./android &&
           ./gradlew assembleRelease
-
+          
+      - name: Move APK to Release
+        run: mv android/app/build/outputs/apk/release/app-release.apk $GITHUB_WORKSPACE/app-release.apk
 
       - name: Create Release
         id: create_release
@@ -51,7 +53,7 @@ jobs:
       - name: Upload APK as Release Asset
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE}}
+          GITHUB_TOKEN: ${{ secrets.TOKEN_HUB_RELEASE }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ github.workspace }}/app-release.apk
