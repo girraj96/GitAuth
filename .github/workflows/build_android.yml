@@ -27,32 +27,12 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Configure Keystore
-        run: |
-          mkdir -p $HOME/.android
-          echo ${{ secrets.KEYSTORE_FILE }} | base64 --decode > $HOME/.android/debug.keystore
-
       - name: Build APK
         run: |
           cd ./android &&
           ./gradlew assembleRelease
 
-      - name: Build AAB
-        run: |
-          cd ./android &&
-          ./gradlew bundleRelease
-
-      - name: Sign AAB
-        run: |
-          cd ./android &&
-          jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/.android/debug.keystore -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} app/build/outputs/bundle/release/app-release.aab alias_name
-
-      - name: Move APK to Release
-        run: mv android/app/build/outputs/apk/release/app-release.apk $GITHUB_WORKSPACE/app-release.apk
-
-      - name: Move AAB to Release
-        run: mv android/app/build/outputs/bundle/release/app-release.aab $GITHUB_WORKSPACE/app-release.aab
-
+  
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
