@@ -1,4 +1,4 @@
-name: Upload to TestFlight
+name: Upload  TestFlight
 
 on:
   push:
