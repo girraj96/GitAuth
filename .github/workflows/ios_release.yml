@@ -27,7 +27,7 @@ jobs:
       - name: Archive app
         run: |
           cd ios
-          xcodebuild archive -workspace YourApp.xcworkspace -scheme YourApp -configuration Release -archivePath YourApp.xcarchive
+          xcodebuild archive -workspace YourApp.xcworkspace -scheme GitAuth -configuration Release -archivePath YourApp.xcarchive
           
       - name: Export IPA
         run: |
